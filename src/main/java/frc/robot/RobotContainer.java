@@ -51,6 +51,19 @@ public class RobotContainer {
             )
         );
 
+        drivetrain.setDefaultCommand(
+            drivetrain.applyRequest(() -> {
+                // Use left trigger axis for slow mode
+                double slowModeThreshold = 0.2;
+                double slowMultiplier = 0.3;
+                double multiplier = (joystick.getLeftTriggerAxis() > slowModeThreshold) ? slowMultiplier : 1.0;
+    
+                return drive.withVelocityX(joystick.getLeftY() * MaxSpeed * multiplier)
+                            .withVelocityY(joystick.getLeftX() * MaxSpeed * multiplier)
+                            .withRotationalRate(joystick.getRightX() * MaxAngularRate * multiplier);
+            })
+        );
+
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
